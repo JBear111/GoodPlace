@@ -33,7 +33,6 @@ class Net(nn.Module):
         self.conv1 = nn.Conv2d(in_channels=3, out_channels=32, kernel_size=3)
         self.conv2 = nn.Conv2d(32, 64, kernel_size=3)
         self.conv3 = nn.Conv2d(64, 128, kernel_size=3)
-        #self.conv2_drop = nn.Dropout2d(0.25)
         self.fc1 = nn.Linear(12800, 1024)
         self.fc2 = nn.Linear(1024, 13)
 
@@ -47,11 +46,10 @@ class Net(nn.Module):
         x = F.dropout(x, training=self.training)
         x = self.fc2(x)
         return x
-        # F.log_softmax(x, dim=1)
 
 
 categories = []
-filename = os.listdir("input/S4")
+filename = os.listdir(PATH)
 for file in filename:
     category = file.split("-")[1]
     categories.append(int(category[2:]) - 1)
@@ -62,14 +60,12 @@ df = pd.DataFrame({
 })
 
 train_transform = transforms.Compose([transforms.ToPILImage(),
-                                      transforms.Resize(256),
-                                      transforms.RandomCrop(256),
                                       transforms.Resize(96),
                                       transforms.ToTensor(),
                                       transforms.Normalize((0.4883, 0.4551, 0.4170), (0.2208, 0.2161, 0.2163))
                                       ])
 
-train_data = DCDataset(df, "input/S4", train_transform)
+train_data = DCDataset(df, PATH, train_transform)
 
 epochs = 70
 classes = 2
@@ -131,5 +127,5 @@ for epoch in range(1, epochs + 1):
             epoch, train_loss, valid_loss, correct_train, correct_valid))
 
 
-PATH = "season4.pth"
+PATH = ""
 torch.save(model.state_dict(), PATH)
