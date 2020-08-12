@@ -50,9 +50,9 @@ def download_image(url, path=DOWNLOAD_PATH, chunksize=512):
 def download_from_subreddit(sub='TheGoodPlace', sort='hot', lim=100,
                             path=DOWNLOAD_PATH):
     """Downloads images from specifed subreddit."""
-    reddit = praw.Reddit(client_id="rXwZYtM7aq4DOw",
-                         client_secret="AFHqwnMW-OysXa-rJZRkI08DFDU", password="spukil14",
-                         user_agent="J-Bear111GoodPlace", username="J-Bear111")
+    reddit = praw.Reddit(client_id="",
+                         client_secret="", password="",
+                         user_agent=, username="")
 
     subreddit = reddit.subreddit(sub)
     subreddit_sort = {
