@@ -34,13 +34,11 @@ class Net(nn.Module):
         self.conv1 = nn.Conv2d(in_channels=3, out_channels=32, kernel_size=3)
         self.conv2 = nn.Conv2d(32, 64, kernel_size=3)
         self.conv3 = nn.Conv2d(64, 128, kernel_size=3)
-        #self.conv2_drop = nn.Dropout2d(0.25)
         self.fc1 = nn.Linear(12800, 1024)
         self.fc2 = nn.Linear(1024, 4)
 
     def forward(self, x):
         x = F.relu(F.max_pool2d(self.conv1(x), 2))
-        #x = F.relu(F.max_pool2d(self.conv2_drop(self.conv2(x)), 2))
         x = F.relu(F.max_pool2d(self.conv2(x),2))
         x = F.relu(F.max_pool2d(self.conv3(x), 2))
         x = x.view(x.shape[0], -1)
@@ -52,7 +50,7 @@ class Net(nn.Module):
 
 
 categories = []
-filename = os.listdir("input/Sezone")
+filename = os.listdir(PATH)
 for file in filename:
     category = file.split("-")[0]
     categories.append(int(category[1])-1)
@@ -64,15 +62,13 @@ df = pd.DataFrame({
 })
 
 train_transform = transforms.Compose([transforms.ToPILImage(),
-                                      transforms.Resize(256),
-                                      transforms.RandomCrop(256),
                                       transforms.Resize(96),
                                       transforms.ToTensor(),
                                       transforms.Normalize((0.4883, 0.4551, 0.4170), (0.2208, 0.2161, 0.2163))
                                       ])
 
 
-train_data = DCDataset(df, "input/Sezone", train_transform)
+train_data = DCDataset(df, PATH, train_transform)
 
 
 epochs = 70
@@ -88,7 +84,6 @@ device = torch.device('cuda')
 model = Net().to(device)
 criterion = nn.CrossEntropyLoss()
 optimizer = torch.optim.Adam(model.parameters(), lr=learning_rate)
-# optimizer = torch.optim.SGD(model.parameters(),lr=learning_rate, momentum=0.9)
 
 train_losses = []
 valid_losses = []
@@ -138,5 +133,5 @@ for epoch in range(1, epochs + 1):
 
 
 
-PATH = "sezone.pth"
+PATH = ""
 torch.save(model.state_dict(), PATH)
